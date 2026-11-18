@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lead Cockpit · IntellectFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f3ee;--card:#fff;--ink:#16241c;--mute:#667568;--line:#dfe4da;--hot:#d23b27;--hotbg:#fde9e5;--wa:#1c8c4e;--wabg:#e2f4e9;--warn:#b7791f;--r:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1712;--card:#18231c;--ink:#e8efe9;--mute:#93a498;--line:#26352b;--hotbg:#3a1a15;--wabg:#173325}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 'DM Sans',system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+h1,h2,.num{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:0 14px 40px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 0 10px}
+h1{font-size:21px;margin:0;letter-spacing:-.3px}
+.sub{color:var(--mute);font-size:12.5px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;min-height:40px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--wa);outline-offset:2px}
+.pill{display:flex;gap:7px;align-items:center;font-weight:600;font-size:13px}
+.dot{width:9px;height:9px;border-radius:50%;background:#aaa}.dot.on{background:var(--wa)}.dot.qr{background:var(--warn)}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:6px 0 14px}
+@media(min-width:640px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.k{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.k .num{font-size:28px;font-weight:700;line-height:1.1}.k small{color:var(--mute)}
+.k.hot .num{color:var(--hot)}.k.wa .num{color:var(--wa)}
+.bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
+.chip{white-space:nowrap;border-radius:99px}.chip.a{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+input[type=search],input[type=text],input[type=password]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;margin-bottom:10px}
+.lead{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.lead.hotl{border-left:4px solid var(--hot)}
+.top{display:flex;gap:12px;padding:13px 14px;align-items:center;cursor:pointer}
+.score{flex:none;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:16px;background:conic-gradient(var(--c) calc(var(--s)*1%),var(--line) 0)}
+.score span{width:40px;height:40px;border-radius:50%;background:var(--card);display:grid;place-items:center}
+.t{flex:1;min-width:0}.t b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t small{color:var(--mute)}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--bg);color:var(--mute);font-weight:600}
+.tag.h{background:var(--hotbg);color:var(--hot)}.tag.n{background:#fff3cd;color:#7a5a00}.tag.s{background:var(--wabg);color:var(--wa)}
+.det{display:none;padding:0 14px 14px;border-top:1px solid var(--line)}.lead.open .det{display:block}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.cmp div{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:13px}.cmp b{font-size:18px;display:block}
+.pts{margin:8px 0;padding-left:18px;color:var(--ink)}.pts li{margin-bottom:4px}
+pre{white-space:pre-wrap;background:var(--wabg);border-radius:10px;padding:12px;font:13.5px/1.5 'DM Sans',sans-serif;margin:8px 0}
+.act{display:flex;gap:8px;flex-wrap:wrap}.act button{flex:1;min-width:110px}
+.go{background:var(--wa);color:#fff;border-color:var(--wa);font-weight:600}
+.sheet{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:9}
+.sheet.show{display:flex}.sheet>div{background:var(--card);width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.sheet img{width:220px;height:220px;display:block;margin:10px auto;background:#fff;padding:6px;border-radius:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:10;display:none;max-width:90%}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1>Lead Cockpit</h1><div class="sub" id="upd">Sheet se load ho raha hai…</div></div>
+    <button class="pill" id="waBtn"><span class="dot" id="dot"></span><span id="waTxt">WhatsApp</span></button>
+  </header>
+  <section class="kpis" id="kpis"></section>
+  <input type="search" id="q" placeholder="Business, area ya category dhundo">
+  <div class="bar" id="chips"></div>
+  <div id="list"></div>
+</div>
+
+<div class="sheet" id="sheet"><div>
+  <h2 style="margin:0 0 4px">WhatsApp Web connect</h2>
+  <p class="sub" style="margin-top:0">Worker URL aur Token daalo, phir QR ko WhatsApp &gt; Linked devices se scan karo.</p>
+  <input type="text" id="wurl" placeholder="https://your-worker.up.railway.app">
+  <input type="password" id="wtok" placeholder="Worker token">
+  <div class="act"><button class="go" id="save">Connect</button><button id="close">Band karo</button></div>
+  <div id="wstate" style="margin-top:12px"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const LS=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch{return null}};
+let leads=[],wa=null,filter='all',query='';
+const cfg=()=>({url:(LS('wurl')||'').replace(/\/$/,''),tok:LS('wtok')||''});
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200)}
+
+async function api(path,body){const{url,tok}=cfg();if(!url)throw new Error('Pehle WhatsApp connect karein');
+  const r=await fetch(url+path,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||'Error');return j}
+
+function firstSeen(){const seen=LS('seen')||{};const now=Date.now();let ch=false;
+  const first=!Object.keys(seen).length;
+  leads.forEach(l=>{if(!seen[l.id]){seen[l.id]=first?0:now;ch=true}l.isNew=seen[l.id]&&now-seen[l.id]<864e5});
+  if(ch)LS('seen',seen)}
+const sentSet=()=>new Set((wa?.sent||[]).filter(s=>!s.err).map(s=>s.id));
+const color=s=>s>=95?'var(--hot)':s>=90?'var(--warn)':'var(--wa)';
+
+async function load(){
+  try{const r=await fetch('/api/leads');const j=await r.json();if(!r.ok)throw new Error(j.error);
+    leads=j.leads;firstSeen();$('#upd').textContent=leads.length+' leads · update '+new Date(j.updated).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}
+  catch(e){$('#upd').textContent=e.message}
+  await pollWA();render()}
+async function pollWA(){if(!cfg().url){setWA('off');return}
+  try{wa=await api('/status');setWA(wa.state)}catch{wa=null;setWA('err')}}
+function setWA(s){const m={connected:['on','WhatsApp connected'],qr:['qr','QR scan karein'],off:['','WhatsApp connect karein'],err:['','Worker offline'],disconnected:['','Reconnecting…']}[s]||['','WhatsApp'];
+  $('#dot').className='dot '+m[0];$('#waTxt').textContent=m[1]}
+
+function render(){
+  const sent=sentSet();
+  const hot=leads.filter(l=>l.hot),nw=leads.filter(l=>l.isNew);
+  const avg=leads.length?Math.round(leads.reduce((a,l)=>a+l.score,0)/leads.length):0;
+  $('#kpis').innerHTML=[['Total leads',leads.length,''],['Hot leads',hot.length,'hot'],['Naye (24h)',nw.length,''],
+    ['Pitch bheja',sent.size+(wa?` / ${wa.cap}/din`:''),'wa']].map(k=>`<div class="k ${k[2]}"><div class="num">${k[1]}</div><small>${k[0]}</small></div>`).join('');
+  const F={all:'Sab',hot:'Hot',new:'Naye',unsent:'Bhejna baaki',sent:'Bhej diye'};
+  $('#chips').innerHTML=Object.entries(F).map(([k,v])=>`<button class="chip ${filter==k?'a':''}" data-f="${k}">${v}</button>`).join('');
+  const q=query.toLowerCase();
+  const rows=leads.filter(l=>(filter=='all'||(filter=='hot'&&l.hot)||(filter=='new'&&l.isNew)||(filter=='unsent'&&!sent.has(l.id))||(filter=='sent'&&sent.has(l.id)))
+    &&(!q||(l.name+l.area+l.cat).toLowerCase().includes(q))).sort((a,b)=>b.score-a.score);
+  $('#list').innerHTML=rows.length?rows.map(l=>card(l,sent)).join(''):'<div class="empty">Is filter me koi lead nahi hai.</div>'}
+
+function card(l,sent){
+  const pts=(l.analysis.match(/\d\)\s[^]*?(?=\s\d\)\s|$)/g)||[]).map(p=>`<li>${esc(p.replace(/^\d\)\s/,''))}</li>`).join('');
+  return `<article class="lead ${l.hot?'hotl':''}" id="${l.id}">
+  <div class="top" data-t="${l.id}"><div class="score" style="--s:${l.score};--c:${color(l.score)}"><span>${l.score}</span></div>
+  <div class="t"><b>${esc(l.name)}</b><small>${esc(l.cat)} · ${esc(l.area.split(',').slice(-2).join(','))}</small>
+  <div class="tags">${l.hot?'<span class="tag h">Hot</span>':''}${l.isNew?'<span class="tag n">Naya</span>':''}${sent.has(l.id)?'<span class="tag s">Bheja gaya</span>':''}${!l.web?'<span class="tag">Website nahi</span>':''}${!l.mobile?'<span class="tag">Landline</span>':''}</div></div></div>
+  <div class="det">
+   <div class="cmp"><div>Aapka rating<b>${l.rating}★ <small>(${l.reviews})</small></b></div><div>${esc(l.comp)}<b>${l.compRating}★ <small>(${l.compReviews})</small></b></div></div>
+   <ol class="pts">${pts}</ol>
+   <small class="sub">Team note: ${esc(l.notes)}</small>
+   <pre>${esc(l.pitch)}</pre>
+   <div class="act">
+    <button class="go" data-send="${l.id}" ${l.mobile?'':'disabled'}>Bhejo (auto)</button>
+    <button data-wa="${l.id}" ${l.mobile?'':'disabled'}>WhatsApp kholo</button>
+    <button data-copy="${l.id}">Pitch copy</button>
+    <button data-call="${l.id}">Call</button></div></div></article>`}
+
+document.addEventListener('click',async e=>{const d=e.target.closest('[data-t],[data-f],[data-send],[data-wa],[data-copy],[data-call]');if(!d)return;
+  const get=id=>leads.find(l=>l.id==id);
+  if(d.dataset.t)return d.closest('.lead').classList.toggle('open');
+  if(d.dataset.f){filter=d.dataset.f;return render()}
+  if(d.dataset.wa){const l=get(d.dataset.wa);return window.open(`https://wa.me/${l.phone}?text=${encodeURIComponent(l.pitch)}`,'_blank')}
+  if(d.dataset.copy){await navigator.clipboard.writeText(get(d.dataset.copy).pitch);return toast('Pitch copy ho gaya')}
+  if(d.dataset.call){return location.href='tel:+'+get(d.dataset.call).phone}
+  if(d.dataset.send){const l=get(d.dataset.send);if(!confirm(`${l.name} ko pitch bhejein?`))return;
+    d.disabled=true;try{await api('/send',{id:l.id,phone:l.phone,pitch:l.pitch});toast('Pitch bhej di gayi');await pollWA();render()}catch(x){toast(x.message);d.disabled=false}}});
+$('#q').oninput=e=>{query=e.target.value;render()};
+
+// WhatsApp connect sheet
+async function showState(){const el=$('#wstate');try{await pollWA();if(!wa)throw 0;
+  el.innerHTML=wa.state=='qr'?`<img alt="WhatsApp QR" src="${wa.qr}"><p class="sub" style="text-align:center">QR scan karein. Ye apne aap refresh hota hai.</p>`
+   :wa.state=='connected'?`<p><b>Connected.</b> Aaj ${wa.sentToday}/${wa.cap} messages gaye.</p>
+    <div class="act"><button class="go" id="auto">${wa.auto?'Auto-send band karo':'Auto-send chalu karo'}</button><button id="out">Disconnect</button></div>
+    <p class="sub">Auto-send roz 10am–7pm IST, sirf Hot mobile leads, random gap ke saath. STOP likhne wale block ho jaate hain.</p>`
+   :'<p class="sub">Worker connect ho raha hai…</p>'}catch{el.innerHTML='<p class="sub">Worker tak nahi pahunch paaye. URL aur token check karein.</p>'}}
+let tm;$('#waBtn').onclick=()=>{$('#wurl').value=cfg().url;$('#wtok').value=cfg().tok;$('#sheet').classList.add('show');showState();tm=setInterval(showState,4000)};
+const closeS=()=>{$('#sheet').classList.remove('show');clearInterval(tm);render()};
+$('#close').onclick=closeS;
+$('#save').onclick=()=>{LS('wurl',$('#wurl').value.trim());LS('wtok',$('#wtok').value.trim());showState()};
+$('#wstate').onclick=async e=>{if(e.target.id=='auto'){await api('/auto',{on:!wa.auto});showState()}
+  if(e.target.id=='out'&&confirm('WhatsApp disconnect karein?')){await api('/logout',{});showState()}};
+load();setInterval(load,60000);
+</script>
+</body>
+</html>
